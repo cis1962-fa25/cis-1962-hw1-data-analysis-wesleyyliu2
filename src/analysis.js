@@ -38,7 +38,12 @@ function cleanData(csv) {
         if (key === 'user_gender') {
             continue;
         }
-        csv.data = csv.data.filter(entry => entry[key] !== null && entry[key] !== '' && entry[key] !== undefined);
+        csv.data = csv.data.filter(
+            (entry) =>
+                entry[key] !== null &&
+                entry[key] !== '' &&
+                entry[key] !== undefined,
+        );
     }
     csv.data = csv.data.map(mergeUser);
     csv.data = csv.data.map(convertTypes);
@@ -46,14 +51,14 @@ function cleanData(csv) {
 }
 
 function mergeUser(entry) {
-    const new_entry = { 
-        ...entry, 
+    const new_entry = {
+        ...entry,
         user: {
             user_id: parseInt(entry.user_id),
             user_age: parseInt(entry.user_age),
             user_country: entry.user_country,
             user_gender: entry.user_gender,
-        }
+        },
     };
     delete new_entry.user_id;
     delete new_entry.user_age;
@@ -102,19 +107,19 @@ function labelSentiment({ rating }) {
  * @returns {{app_name: string, positive: number, neutral: number, negative: number}[]} - An array of objects, each summarizing sentiment counts for an app
  */
 function sentimentAnalysisApp(cleaned) {
-    const sentiments = cleaned.map(entry => ({
+    const sentiments = cleaned.map((entry) => ({
         ...entry,
-        sentiment: labelSentiment({ rating: entry.rating })
+        sentiment: labelSentiment({ rating: entry.rating }),
     }));
-    
+
     const ans = {};
-    sentiments.forEach(entry => {
+    sentiments.forEach((entry) => {
         if (!ans[entry.app_name]) {
             ans[entry.app_name] = {
                 app_name: entry.app_name,
                 positive: 0,
                 neutral: 0,
-                negative: 0
+                negative: 0,
             };
         }
         ans[entry.app_name][entry.sentiment]++;
@@ -131,19 +136,19 @@ function sentimentAnalysisApp(cleaned) {
  * @returns {{lang_name: string, positive: number, neutral: number, negative: number}[]} - An array of objects, each summarizing sentiment counts for a language
  */
 function sentimentAnalysisLang(cleaned) {
-    const sentiments = cleaned.map(entry => ({
+    const sentiments = cleaned.map((entry) => ({
         ...entry,
-        sentiment: labelSentiment({ rating: entry.rating })
+        sentiment: labelSentiment({ rating: entry.rating }),
     }));
-    
+
     const ans = {};
-    sentiments.forEach(entry => {
+    sentiments.forEach((entry) => {
         if (!ans[entry.review_language]) {
             ans[entry.review_language] = {
                 lang_name: entry.review_language,
                 positive: 0,
                 neutral: 0,
-                negative: 0
+                negative: 0,
             };
         }
         ans[entry.review_language][entry.sentiment]++;
@@ -168,7 +173,7 @@ function sentimentAnalysisLang(cleaned) {
  */
 function summaryStatistics(cleaned) {
     const agg = {};
-    cleaned.forEach(entry => {
+    cleaned.forEach((entry) => {
         if (!agg[entry.app_name]) {
             agg[entry.app_name] = {
                 app_name: entry.app_name,
@@ -201,8 +206,9 @@ function summaryStatistics(cleaned) {
                 mostReviews: agg[app_name].num_reviews,
                 mostUsedDevice: most_used_device,
                 mostDevices: most_devices,
-                avgRating: agg[app_name].total_rating / agg[app_name].num_reviews,
-            }
+                avgRating:
+                    agg[app_name].total_rating / agg[app_name].num_reviews,
+            };
             most_reviews = agg[app_name].num_reviews;
         }
     }
@@ -218,5 +224,5 @@ module.exports = {
     sentimentAnalysisApp,
     sentimentAnalysisLang,
     summaryStatistics,
-    labelSentiment
+    labelSentiment,
 };
